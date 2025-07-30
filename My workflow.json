@@ -1,0 +1,171 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Request on installaion",
+        "formDescription": "we will reach out to your email for booking appointment",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "=Email Address",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Preferred install date",
+              "fieldType": "date"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "fcdca7eb-c346-4238-8dbd-a3650af88cc0",
+      "name": "On form submission",
+      "webhookId": "8551854f-41ee-4d8c-9618-6e7abf387928"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "587ffb04-f823-4841-86d7-4c05555a97ad",
+              "leftValue": "={{ $json['Preferred install date'].toDateTime() }}",
+              "rightValue": "={{ $now.plus(7,'days') }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "beforeOrEquals"
+              }
+            },
+            {
+              "id": "ead010ec-19ce-47d0-a827-0c90ac7b8ddf",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        176,
+        32
+      ],
+      "id": "6afd6124-78f4-4eec-980a-9b33b229f3a0",
+      "name": "is within 7 days?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        336,
+        144
+      ],
+      "id": "ff7db6de-5177-46ce-a1ef-4ffb986a24cb",
+      "name": "to do"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C01412XFCNT",
+          "mode": "list",
+          "cachedResultName": "questions-answers"
+        },
+        "text": "=New install request(within 7 days):\n\ncontact email:{{ $json['Email Address'] }}\n\npreferred install date:{{ $json['Preferred install date'] }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        384,
+        -64
+      ],
+      "id": "77c7f8a4-da15-4807-966b-c7a397ffe2f2",
+      "name": "Send a message",
+      "webhookId": "4c7ac529-e0b0-4814-9a6a-fdec59559640",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "W5PUjEA6yRZjyTy7",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "Email Address": "sweetysri07@gmail.com",
+          "Preferred install date": "2025-07-30",
+          "submittedAt": "2025-07-30T12:23:51.587+05:30",
+          "formMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "is within 7 days?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is within 7 days?": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "to do",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "39e51c58-7d98-4b0c-bfdb-d5dca570040e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fd2aa078cc27c110732d69f306965035b8be4df84b7f57a65b287d4b6c815ac2"
+  },
+  "id": "4wyDX3q3NQvxCqJj",
+  "tags": []
+}
